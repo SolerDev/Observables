@@ -2,6 +2,6 @@
 {
     public interface IGeneric
     {
-        Type InstanceType { get; }
+        Type GenericType { get; }
     }
 }

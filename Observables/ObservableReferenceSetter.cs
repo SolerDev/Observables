@@ -20,7 +20,7 @@ namespace Observables
 
         private void SetObservableComponent()
         {
-            var componentType = _observable.InstanceType;
+            var componentType = _observable.GenericType;
             if (TryGetComponent(componentType, out var component))
                 _observable.Set(component);
             else

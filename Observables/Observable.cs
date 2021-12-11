@@ -2,19 +2,17 @@
 {
     public class Observable<T> : ObservableBase, IObservable<T>
     {
-        private T _currentValue;
-        public override Type InstanceType => typeof(T);
+        private T? _currentValue;
+        public override Type GenericType => typeof(T);
 
         public event EventHandler<ValueChangedEventArgs<T>> OnChanged;
         public event EventHandler<ValueChangedEventArgs<T>> OnBeforeChanged;
-        public event EventHandler<ValueChangedEventArgs<T>> OnAfterChanged;
         protected override event EventHandler<ValueChangedEventArgs<object>> OnChangedBase;
         protected override event EventHandler<ValueChangedEventArgs<object>> OnBeforeChangedBase;
-        protected override event EventHandler<ValueChangedEventArgs<object>> OnAfterChangedBase;
 
         public bool Equals(T? other)
         {
-            throw new NotImplementedException();
+            return other != null && other.Equals(_currentValue);
         }
 
         public T Get()
@@ -22,15 +20,16 @@
             return _currentValue;
         }
 
-        public void Set(T newValue)
+        public bool Set(T newValue)
         {
             if (Equals(_currentValue, newValue))
-                return;
+                return false;
 
             var oldValue = _currentValue;
 
+
+            //todo: return here when I'm wiser. Is this the best way to create the ValueChangedEventArgs<object>?
             var e = new ValueChangedEventArgs<T>(oldValue, newValue);
-            //todo: come back here when I'm wiser. Is this the best way to create the ValueChangedEventArgs<object>?
             var eBase = new ValueChangedEventArgs<object>(oldValue, newValue);
 
             OnBeforeChanged?.Invoke(this, e);
@@ -38,8 +37,8 @@
             _currentValue = newValue;
             OnChanged?.Invoke(this, e);
             OnChangedBase?.Invoke(this, eBase);
-            OnAfterChanged?.Invoke(this, e);
-            OnAfterChangedBase?.Invoke(this, eBase);
+
+            return true;
         }
 
         protected override object GetBase()
@@ -47,9 +46,9 @@
             return Get();
         }
 
-        protected override void SetBase(object value)
+        protected override bool SetBase(object value)
         {
-            Set((T)value);
+            return Set((T)value);
         }
     }
 }

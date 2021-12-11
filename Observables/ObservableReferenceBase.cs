@@ -5,11 +5,10 @@ namespace Observables
     [ExecuteAlways]
     public abstract class ObservableReferenceBase : ScriptableObject, IObservable
     {
-        public abstract Type InstanceType { get; }
+        public abstract Type GenericType { get; }
 
         protected abstract event EventHandler<ValueChangedEventArgs<object>> OnChangedBase;
         protected abstract event EventHandler<ValueChangedEventArgs<object>> OnBeforeChangedBase;
-        protected abstract event EventHandler<ValueChangedEventArgs<object>> OnAfterChangedBase;
 
         event EventHandler<ValueChangedEventArgs<object>> IReadOnlyObservable.OnChanged
         {
@@ -21,16 +20,11 @@ namespace Observables
             add { OnBeforeChangedBase += value; }
             remove { OnBeforeChangedBase -= value; }
         }
-        event EventHandler<ValueChangedEventArgs<object>> IReadOnlyObservable.OnAfterChanged
-        {
-            add { OnAfterChangedBase += value; }
-            remove { OnAfterChangedBase -= value; }
-        }
 
 
-        void IObservable.Set(object value)
+        bool IObservable.Set(object value)
         {
-            SetBase(value);
+            return SetBase(value);
         }
         object IReadOnlyObservable.Get()
         {
@@ -38,7 +32,7 @@ namespace Observables
         }
 
 
-        protected abstract void SetBase(object value);
+        protected abstract bool SetBase(object value);
         protected abstract object GetBase();
 
 

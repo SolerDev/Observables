@@ -2,10 +2,10 @@
 {
     public interface IObservable : IReadOnlyObservable
     {
-        void Set(object value);
+        bool Set(object value);
     }
     public interface IObservable<T> : IObservable, IReadOnlyObservable<T>
     {
-        void Set(T value);
+        bool Set(T value);
     }
 }
